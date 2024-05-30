@@ -21,8 +21,9 @@ public class Enemy : Player
     void Update()
     {
         healthBar.transform.position = new Vector2(transform.position.x, transform.position.y - 1.25f);
+        showDamage.transform.position = transform.position;
 
-        if(!diedAlready && health <= 0)
+        if (!diedAlready && health <= 0)
         {
             DisableEnemy();
         }
@@ -50,7 +51,7 @@ public class Enemy : Player
         {
             GameObject item = Instantiate(itemDropped);
             item.transform.position = transform.position;
-            item.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 200);
+            item.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 500);
         }
     }
 

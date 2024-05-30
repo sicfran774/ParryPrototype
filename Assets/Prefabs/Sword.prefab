@@ -69,10 +69,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7b98a9bc08135f4fb78a4d870c4877f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
-  damageKnockback: 200
-  swordSwingDuration: 0.7
-  parryWindow: 0
+  damage: 10
+  damageKnockback: 300
+  swingDuration: 0.7
+  doubleSwingDuration: 1
+  spinDuration: 0
+  parryWindow: 0.2
   enemyMinTime: 0
   enemyMaxTime: 0
   isSwinging: 0

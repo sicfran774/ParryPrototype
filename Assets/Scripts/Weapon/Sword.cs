@@ -7,7 +7,9 @@ public class Sword : MonoBehaviour
 {
     public int damage;
     public float damageKnockback;
-    public float swordSwingDuration;
+    public float swingDuration;
+    public float doubleSwingDuration;
+    public float spinDuration;
     public float parryWindow; // Starts the moment you press "Block"
 
     // Range of waiting between swings
@@ -68,8 +70,7 @@ public class Sword : MonoBehaviour
                 isBlocking = false;
                 animator.SetBool("IsBlocking", false);
             }
-
-            if (isBlocking && Input.GetMouseButtonDown(1))
+            if(!isParrying && !isSwinging && Input.GetMouseButtonDown(1))
             {
                 StartCoroutine(ParryTimer());
             }
@@ -78,18 +79,30 @@ public class Sword : MonoBehaviour
 
     IEnumerator RandomTime()
     {
+        int counter = 0;
         while (true)
         {
-            EnemyAttack();
+            EnemyAttack(counter);
             yield return new WaitForSeconds(Random.Range(enemyMinTime, enemyMaxTime));
+            counter = (counter < 3) ? counter + 1 : 0;
         }
     }
 
-    void EnemyAttack()
+    void EnemyAttack(int attack)
     {
         if (enemyLockOn.player != null && !isSwinging)
         {
-            StartCoroutine(Swing());
+            if (attack < 3)
+            {
+                Debug.Log("swing");
+                StartCoroutine(Swing());
+            }
+            else
+            {
+                Debug.Log("double swing");
+                StartCoroutine(DoubleSwing());
+            }
+            
         }
     }
 
@@ -97,11 +110,29 @@ public class Sword : MonoBehaviour
     {
         isSwinging = true;
         animator.SetBool("IsSwinging", true);
-        yield return new WaitForSeconds(swordSwingDuration);
+        yield return new WaitForSeconds(swingDuration);
         isSwinging = false;
         alreadyParried = false;
         animator.SetBool("IsSwinging", false);
-        particleSys.Stop();
+    }
+
+    IEnumerator DoubleSwing()
+    {
+        isSwinging = true;
+        animator.SetBool("IsDoubleSwinging", true);
+        yield return new WaitForSeconds(doubleSwingDuration);
+        isSwinging = false;
+        animator.SetBool("IsDoubleSwinging", false);
+    }
+
+    IEnumerable Spin()
+    {
+        isSwinging = true;
+        animator.SetBool("IsSpinning", true);
+        yield return new WaitForSeconds(spinDuration);
+        isSwinging = false;
+        alreadyParried = false;
+        animator.SetBool("IsSpinning", false);
     }
 
     IEnumerator ParryTimer()
@@ -109,10 +140,8 @@ public class Sword : MonoBehaviour
         isParrying = true;
         yield return new WaitForSeconds(parryWindow);
         isParrying = false;
-        particleSys.Stop();
     }
 
-    // Remember, this is the OTHER PERSON'S sword
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isSwinging && !alreadyParried &&
@@ -123,15 +152,26 @@ public class Sword : MonoBehaviour
             if (collision.GetComponentInChildren<Sword>().IsParrying())
             {
                 alreadyParried = true;
-                particleSys.Play();
-                audioSource.pitch = Random.Range(0.9f, 1.1f);
-                audioSource.PlayOneShot(parrySound);
+                StartCoroutine(ParryParticles());
             }
             else
             {
-                collision.gameObject.GetComponent<Player>().TakeDamage(collision.GetComponentInChildren<Sword>().isBlocking ? Mathf.Max(1, (int)(damage * 0.5f)) : damage, transform.parent.transform.position, damageKnockback);
+                collision.gameObject.GetComponent<Player>().TakeDamage(
+                    collision.GetComponentInChildren<Sword>().isBlocking ? 
+                        Mathf.Max(1, (int)(damage * 0.5f)) : damage, 
+                    transform.parent.transform.position, damageKnockback
+                );
             }
         }
+    }
+
+    IEnumerator ParryParticles()
+    {
+        particleSys.Play();
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        audioSource.PlayOneShot(parrySound);
+        yield return new WaitForSeconds(0.2f);
+        particleSys.Stop();
     }
 
     public bool IsParrying()

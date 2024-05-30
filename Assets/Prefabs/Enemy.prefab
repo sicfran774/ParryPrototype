@@ -395,11 +395,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
+  currency: 0
   hitIFramesSecondsCooldown: 0.5
   knockbackWait: 1
+  showDamageNumbers: 1
   isIFraming: 0
   hurtSound: {fileID: 8300000, guid: af2c480922da5d9468aa6003cf68bedf, type: 3}
   healthBar: {fileID: 2426316497531391334}
+  showDamage: {fileID: 3122527585606700189}
+  currencyText: {fileID: 0}
   aliveEyes: {fileID: 8372188266305348327}
   deathEyes: {fileID: 815449548393838119}
   itemDropped: {fileID: 2063380216429709210, guid: 1172d1349bc2a674dbc7e6cce5f543c5, type: 3}
@@ -1011,6 +1015,18 @@ PrefabInstance:
       propertyPath: bar
       value: 
       objectReference: {fileID: 6557396998880807319}
+    - target: {fileID: 2983700353229916017, guid: 4fdea2b5ca60d334c90175714f3235e5, type: 3}
+      propertyPath: floatRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2983700353229916017, guid: 4fdea2b5ca60d334c90175714f3235e5, type: 3}
+      propertyPath: damageText
+      value: 
+      objectReference: {fileID: 1966659443301448545, guid: 4b403ad354a2de345b5b7479a33189fc, type: 3}
+    - target: {fileID: 2983700353229916017, guid: 4fdea2b5ca60d334c90175714f3235e5, type: 3}
+      propertyPath: textLifetime
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 3286007881157694605, guid: 4fdea2b5ca60d334c90175714f3235e5, type: 3}
       propertyPath: m_Name
       value: Canvas
@@ -1130,6 +1146,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 352918849182eb748ba15e3b84eebf74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3122527585606700189 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2983700353229916017, guid: 4fdea2b5ca60d334c90175714f3235e5, type: 3}
+  m_PrefabInstance: {fileID: 161366397254372332}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf9139fedad688846b43bc8db31b2cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &4382436480690168087 stripped

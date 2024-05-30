@@ -7,7 +7,7 @@ using TMPro;
 public class Player : MonoBehaviour
 {
     public int health;
-    private int maxHealth;
+    public int maxHealth;
     public int currency;
     public float hitIFramesSecondsCooldown;
     public float knockbackWait;
@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     [Header("References")]
     public AudioClip hurtSound;
     public HealthBar healthBar;
+    public ShowDamage showDamage;
     public TMP_Text currencyText;
 
     void Start()
@@ -33,9 +34,11 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if(health <= 0)
+        showDamage.transform.position = transform.position;
+
+        if (health <= 0) //Death
         {
-            Debug.Log("You died loser");
+            
         }
     }
 
@@ -54,7 +57,10 @@ public class Player : MonoBehaviour
 
             StartCoroutine(IFrameCooldown(hitIFramesSecondsCooldown));
 
+            //Debug.Log(gameObject + " took " + damage + " damage");
+
             health -= damage;
+            showDamage.Show(damage);
             healthBar.UpdateHealth(health);
 
             float x = transform.position.x - origin.x;
