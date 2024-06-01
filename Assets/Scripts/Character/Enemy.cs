@@ -5,6 +5,7 @@ using UnityEngine;
 public class Enemy : Player
 {
     private float turnRate = 500f;
+    public float HPBarOffset;
     public GameObject aliveEyes;
     public GameObject deathEyes;
 
@@ -20,7 +21,7 @@ public class Enemy : Player
 
     void Update()
     {
-        healthBar.transform.position = new Vector2(transform.position.x, transform.position.y - 1.25f);
+        healthBar.transform.position = new Vector2(transform.position.x, transform.position.y - HPBarOffset);
         showDamage.transform.position = transform.position;
 
         if (!diedAlready && health <= 0)
@@ -39,6 +40,7 @@ public class Enemy : Player
             child.gameObject.SetActive(false);
         }
         GetComponent<Pathfinding.AIPath>().canMove = false;
+        GetComponent<Collider2D>().enabled = false;
         aliveEyes.SetActive(false);
         deathEyes.SetActive(true);
         SpawnItemDrop();
@@ -63,10 +65,10 @@ public class Enemy : Player
         transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, angle), turnRate * Time.deltaTime);
     }
 
-    public IEnumerator KnockbackAndWait()
+    public IEnumerator StopMovingAndWait(float time)
     {
         GetComponent<Pathfinding.AIPath>().canMove = false;
-        yield return new WaitForSeconds(knockbackWait);
+        yield return new WaitForSeconds(time);
         if(!diedAlready) GetComponent<Pathfinding.AIPath>().canMove = true;
     }
 }

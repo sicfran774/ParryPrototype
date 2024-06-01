@@ -395,15 +395,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
+  maxHealth: 0
   currency: 0
   hitIFramesSecondsCooldown: 0.5
   knockbackWait: 1
-  showDamageNumbers: 1
   isIFraming: 0
   hurtSound: {fileID: 8300000, guid: af2c480922da5d9468aa6003cf68bedf, type: 3}
   healthBar: {fileID: 2426316497531391334}
   showDamage: {fileID: 3122527585606700189}
   currencyText: {fileID: 0}
+  HPBarOffset: 0
   aliveEyes: {fileID: 8372188266305348327}
   deathEyes: {fileID: 815449548393838119}
   itemDropped: {fileID: 2063380216429709210, guid: 1172d1349bc2a674dbc7e6cce5f543c5, type: 3}
@@ -566,9 +567,9 @@ MonoBehaviour:
   targetCompatibility: {fileID: 0}
   maxAcceleration: -2.5
   rotationSpeed: 360
-  slowdownDistance: 0.6
+  slowdownDistance: 3
   pickNextWaypointDist: 2
-  endReachedDistance: 0.2
+  endReachedDistance: 2
   alwaysDrawGizmos: 0
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 0
@@ -886,7 +887,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 6
+  m_Radius: 6.5
 --- !u!1 &5107423070218721937
 GameObject:
   m_ObjectHideFlags: 0
@@ -1248,7 +1249,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5154244513348355255, guid: 95e89881f28ba97459d49636222fac20, type: 3}
       propertyPath: enemyMinTime
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95e89881f28ba97459d49636222fac20, type: 3}

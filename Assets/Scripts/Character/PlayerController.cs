@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float moveSpeed;
     [SerializeField] private bool canDash = true;
+    [SerializeField] private bool attacking = false;
     [SerializeField] private bool stunned = false;
 
     private float turnRate = 500f;
@@ -90,5 +91,15 @@ public class PlayerController : MonoBehaviour
     public void setStunned(bool _stunned)
     {
         stunned = _stunned;
+    }
+
+    public bool isAttacking()
+    {
+        return attacking;
+    }
+
+    public void setAttacking(bool _attacking)
+    {
+        attacking = _attacking;
     }
 }

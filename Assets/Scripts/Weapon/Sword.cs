@@ -32,6 +32,7 @@ public class Sword : MonoBehaviour
     
     void Start()
     {
+        
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         particleSys = GetComponentInChildren<ParticleSystem>();
@@ -56,23 +57,35 @@ public class Sword : MonoBehaviour
     {
         if (!GetComponentInParent<PlayerController>().isStunned())
         {
-            if (!isSwinging && Input.GetMouseButtonDown(0))
+            if (!isBlocking && !isSwinging && !animator.GetCurrentAnimatorStateInfo(0).IsName("Swing") && Input.GetMouseButtonDown(0))
             {
                 StartCoroutine(Swing());
             }
             else if (!isSwinging && Input.GetMouseButton(1))
             {
                 isBlocking = true;
-                animator.SetBool("IsBlocking", true);
             }
             else
             {
                 isBlocking = false;
                 animator.SetBool("IsBlocking", false);
             }
-            if(!isParrying && !isSwinging && Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButton(1))
+            {
+                animator.SetBool("IsBlocking", true);
+            }
+
+            if(!isSwinging && Input.GetMouseButtonDown(1))
             {
                 StartCoroutine(ParryTimer());
+            }
+            if (alreadyParried && Input.GetMouseButtonUp(1))
+            {
+                alreadyParried = false;
+            }
+            if (isParrying)
+            {
+                isBlocking = true;
             }
         }
     }
@@ -94,25 +107,26 @@ public class Sword : MonoBehaviour
         {
             if (attack < 3)
             {
-                Debug.Log("swing");
+                //Debug.Log("swing");
                 StartCoroutine(Swing());
+                StartCoroutine(GetComponentInParent<Enemy>().StopMovingAndWait(swingDuration));
             }
             else
             {
-                Debug.Log("double swing");
+               //Debug.Log("double swing");
                 StartCoroutine(DoubleSwing());
+                StartCoroutine(GetComponentInParent<Enemy>().StopMovingAndWait(doubleSwingDuration));
             }
-            
         }
     }
 
     IEnumerator Swing()
     {
+        
         isSwinging = true;
         animator.SetBool("IsSwinging", true);
         yield return new WaitForSeconds(swingDuration);
         isSwinging = false;
-        alreadyParried = false;
         animator.SetBool("IsSwinging", false);
     }
 
@@ -131,42 +145,55 @@ public class Sword : MonoBehaviour
         animator.SetBool("IsSpinning", true);
         yield return new WaitForSeconds(spinDuration);
         isSwinging = false;
-        alreadyParried = false;
         animator.SetBool("IsSpinning", false);
     }
 
     IEnumerator ParryTimer()
     {
         isParrying = true;
+        isBlocking = true;
+        alreadyParried = true;
         yield return new WaitForSeconds(parryWindow);
         isParrying = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (isSwinging && !alreadyParried &&
+        if (isSwinging &&
            ((transform.parent.tag == "Player" && collision.tag == "Enemy") ||
            (transform.parent.tag == "Enemy" && collision.tag == "Player")))
         {
+            //Debug.Log(", origin: " + transform.parent.gameObject + ", hit: " + collision.gameObject);
             //If the opponent's sword is parrying
             if (collision.GetComponentInChildren<Sword>().IsParrying())
             {
-                alreadyParried = true;
-                StartCoroutine(ParryParticles());
+                StartCoroutine(collision.GetComponentInChildren<Sword>().ParryParticles());
+                isParrying = false;
             }
             else
             {
                 collision.gameObject.GetComponent<Player>().TakeDamage(
-                    collision.GetComponentInChildren<Sword>().isBlocking ? 
-                        Mathf.Max(1, (int)(damage * 0.5f)) : damage, 
+                    collision.GetComponentInChildren<Sword>().isBlocking ?
+                        Mathf.Max(1, (int)(damage * 0.5f)) : damage,
                     transform.parent.transform.position, damageKnockback
                 );
             }
         }
+        /*else if(isSwinging && collision.GetComponent<Sword>() != null)
+        {
+            
+            //If the opponent's sword is parrying
+            if (collision.GetComponent<Sword>().IsParrying())
+            {
+                StartCoroutine(collision.GetComponent<Sword>().ParryParticles());
+            }
+        }*/
+        
     }
 
-    IEnumerator ParryParticles()
+    public IEnumerator ParryParticles()
     {
+        Debug.Log("Sound origin: " + transform.parent.gameObject);
         particleSys.Play();
         audioSource.pitch = Random.Range(0.9f, 1.1f);
         audioSource.PlayOneShot(parrySound);

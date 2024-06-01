@@ -7,9 +7,11 @@ public class LockOnHandler : MonoBehaviour
     public bool lockedOn = false;
     public GameObject targetedEnemy;
     public GameObject indicator;
+    public SmoothCamera smoothCamera;
 
     [SerializeField] private List<GameObject> enemiesInRange;
     [SerializeField] private int enemyIndex;
+    public GameObject player;
 
     void Start()
     {
@@ -43,6 +45,13 @@ public class LockOnHandler : MonoBehaviour
         if (lockedOn && targetedEnemy != null)
         {
             indicator.transform.position = targetedEnemy.transform.position;
+            Vector3 midpoint = (player.transform.position + indicator.transform.position) / 2f;
+            Vector2 offset = midpoint - player.transform.position;
+            smoothCamera.offset = offset;
+        }
+        else
+        {
+            smoothCamera.offset = Vector3.zero;
         }
         indicator.SetActive(lockedOn);
     }

@@ -48,7 +48,7 @@ public class Player : MonoBehaviour
         {
             if (GetComponent<Enemy>() != null)
             {
-                StartCoroutine(GetComponent<Enemy>().KnockbackAndWait());
+                StartCoroutine(GetComponent<Enemy>().StopMovingAndWait(knockbackWait));
             }
             else
             {
