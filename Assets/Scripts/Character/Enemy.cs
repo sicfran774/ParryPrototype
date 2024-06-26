@@ -10,6 +10,7 @@ public class Enemy : Player
     public GameObject deathEyes;
 
     public GameObject itemDropped;
+    public string swordArtDropped = "";
     private bool diedAlready = false;
 
     void Start()
@@ -54,6 +55,11 @@ public class Enemy : Player
             GameObject item = Instantiate(itemDropped);
             item.transform.position = transform.position;
             item.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 500);
+        }
+
+        if(swordArtDropped.Length > 0)
+        {
+           GameObject.Find("Player").GetComponent<Upgrade>().UnlockSwordArt(swordArtDropped);
         }
     }
 

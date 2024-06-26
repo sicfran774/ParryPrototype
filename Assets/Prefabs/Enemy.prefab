@@ -397,8 +397,8 @@ MonoBehaviour:
   health: 100
   maxHealth: 0
   currency: 0
-  hitIFramesSecondsCooldown: 0.5
-  knockbackWait: 1
+  hitIFramesSecondsCooldown: 0.2
+  knockbackWait: 0.5
   isIFraming: 0
   hurtSound: {fileID: 8300000, guid: af2c480922da5d9468aa6003cf68bedf, type: 3}
   healthBar: {fileID: 2426316497531391334}

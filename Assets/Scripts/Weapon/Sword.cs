@@ -11,6 +11,7 @@ public class Sword : MonoBehaviour
     public float doubleSwingDuration;
     public float spinDuration;
     public float parryWindow; // Starts the moment you press "Block"
+    public Art swordArt;
 
     // Range of waiting between swings
     public float enemyMinTime;
@@ -20,6 +21,9 @@ public class Sword : MonoBehaviour
     [SerializeField] private bool isBlocking = false;
     [SerializeField] private bool isParrying = false;
     private bool alreadyParried = false;
+    private bool leftClickDown = false;
+    private bool rightClickDown = false;
+
     private Animator animator;
     private ParticleSystem particleSys;
 
@@ -29,7 +33,13 @@ public class Sword : MonoBehaviour
 
     [Header("References")]
     public EnemyLockOn enemyLockOn;
-    
+
+    public enum Art
+    {
+        None,
+        DoubleSwing
+    }
+
     void Start()
     {
         
@@ -57,25 +67,22 @@ public class Sword : MonoBehaviour
     {
         if (!GetComponentInParent<PlayerController>().isStunned())
         {
-            if (!isBlocking && !isSwinging && !animator.GetCurrentAnimatorStateInfo(0).IsName("Swing") && Input.GetMouseButtonDown(0))
+            leftClickDown = Input.GetMouseButton(0);
+            rightClickDown = Input.GetMouseButton(1);
+            if (!isBlocking && !isSwinging && !animator.GetCurrentAnimatorStateInfo(0).IsName("Swing"))
             {
-                StartCoroutine(Swing());
-            }
-            else if (!isSwinging && Input.GetMouseButton(1))
-            {
-                isBlocking = true;
+                if (rightClickDown || leftClickDown) 
+                {
+                    StartCoroutine(WaitThenChooseAttack());
+                }
             }
             else
             {
                 isBlocking = false;
                 animator.SetBool("IsBlocking", false);
             }
-            if (Input.GetMouseButton(1))
-            {
-                animator.SetBool("IsBlocking", true);
-            }
-
-            if(!isSwinging && Input.GetMouseButtonDown(1))
+            
+            if (!isSwinging && Input.GetMouseButtonDown(1))
             {
                 StartCoroutine(ParryTimer());
             }
@@ -113,16 +120,49 @@ public class Sword : MonoBehaviour
             }
             else
             {
-               //Debug.Log("double swing");
-                StartCoroutine(DoubleSwing());
-                StartCoroutine(GetComponentInParent<Enemy>().StopMovingAndWait(doubleSwingDuration));
+                switch (swordArt)
+                {
+                    case Art.DoubleSwing:
+                        StartCoroutine(DoubleSwing());
+                        StartCoroutine(GetComponentInParent<Enemy>().StopMovingAndWait(doubleSwingDuration));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    IEnumerator WaitThenChooseAttack()
+    {
+        if (leftClickDown)
+        {
+            yield return new WaitForSeconds(0.02f);
+            if (rightClickDown) // Both buttons were pressed, so do special attack
+            {
+                if (swordArt == Art.DoubleSwing)
+                {
+                    StartCoroutine(DoubleSwing());
+                }
+            } 
+            else // Just do the normal swing
+            {
+                StartCoroutine(Swing());
+            }
+        } 
+        else
+        {
+            while (rightClickDown) // Parry/block
+            {
+                animator.SetBool("IsBlocking", true);
+                isBlocking = true;
+                yield return null;
             }
         }
     }
 
     IEnumerator Swing()
     {
-        
         isSwinging = true;
         animator.SetBool("IsSwinging", true);
         yield return new WaitForSeconds(swingDuration);
@@ -209,5 +249,10 @@ public class Sword : MonoBehaviour
     public bool IsBlocking()
     {
         return isBlocking;
+    }
+
+    public bool IsSwinging()
+    {
+        return isSwinging;
     }
 }

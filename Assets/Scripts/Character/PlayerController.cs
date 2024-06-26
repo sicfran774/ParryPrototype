@@ -21,10 +21,12 @@ public class PlayerController : MonoBehaviour
     [Header("References")]
     public GameObject lockOnIndicator;
     private Rigidbody2D rb;
+    private Sword sword;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        sword = transform.GetChild(0).GetComponent<Sword>();
         moveSpeed = walkSpeed;
     }
     
@@ -41,7 +43,7 @@ public class PlayerController : MonoBehaviour
         float vertical = Input.GetAxisRaw("Vertical");
         Vector2 direction = new Vector2(horizontal, vertical);
 
-        if (!stunned)
+        if (!stunned && !sword.IsSwinging())
         {
             rb.velocity = direction * moveSpeed;
         }
@@ -53,7 +55,7 @@ public class PlayerController : MonoBehaviour
             float y = lockOnIndicator.transform.position.y - transform.position.y;
             RotatePlayer(new Vector2(x, y));
         }
-        else if (direction != Vector2.zero)
+        else if (!sword.IsSwinging() && direction != Vector2.zero)
         {
             RotatePlayer(direction);
         }
